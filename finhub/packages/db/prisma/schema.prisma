@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String        @id @default(uuid())
+  email          String        @unique
+  name           String
+  preferredCurrency String     @default("BRL")
+  createdAt      DateTime      @default(now())
+  
+  accounts       Account[]
+  transactions   Transaction[]
+  schedules      Schedule[]
+  loans          Loan[]
+}
+
+model Account {
+  id             String        @id @default(uuid())
+  name           String
+  type           String        // CREDIT_CARD, CHECKING_ACCOUNT
+  dueDate        Int?          // Day of the month for credit cards
+  closingDate    Int?          // Day of the month for credit cards
+  userId         String
+  createdAt      DateTime      @default(now())
+
+  user           User          @relation(fields: [userId], references: [id])
+  transactions   Transaction[]
+  loans          Loan[]
+}
+
+model Transaction {
+  id             String        @id @default(uuid())
+  amount         Float
+  category       String
+  date           DateTime
+  status         String        // PENDING, PAID
+  accountId      String
+  userId         String
+  scheduleId     String?
+  createdAt      DateTime      @default(now())
+
+  account        Account       @relation(fields: [accountId], references: [id])
+  user           User          @relation(fields: [userId], references: [id])
+  schedule       Schedule?     @relation(fields: [scheduleId], references: [id])
+}
+
+model Schedule {
+  id             String        @id @default(uuid())
+  frequencyRule  String        // MONTHLY, WEEKLY, etc.
+  startDate      DateTime
+  nextOccurrence DateTime
+  userId         String
+  createdAt      DateTime      @default(now())
+
+  user           User          @relation(fields: [userId], references: [id])
+  transactions   Transaction[]
+}
+
+model Loan {
+  id             String        @id @default(uuid())
+  principal      Float
+  interestRate   Float
+  totalInstallments Int
+  startDate      DateTime
+  userId         String
+  accountId      String
+  createdAt      DateTime      @default(now())
+
+  user           User          @relation(fields: [userId], references: [id])
+  account        Account       @relation(fields: [accountId], references: [id])
+}

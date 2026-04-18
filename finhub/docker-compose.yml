@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: finhub_db
+    environment:
+      POSTGRES_USER: finhub
+      POSTGRES_PASSWORD: finhub_password
+      POSTGRES_DB: finhub_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    container_name: finhub_api
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://finhub:finhub_password@db:5432/finhub_dev?schema=public
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: finhub_web
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  metro:
+    build:
+      context: .
+      dockerfile: apps/mobile/Dockerfile
+    container_name: finhub_metro
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    environment:
+      EXPO_USE_DEV_SERVER: "true"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes:
+  pgdata:

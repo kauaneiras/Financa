@@ -1,0 +1,13 @@
+{
+  "name": "@finhub/app",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "solito": "^5.0.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
+

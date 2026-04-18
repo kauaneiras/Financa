@@ -1,0 +1,12 @@
+{
+  "name": "@finhub/ui",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.tsx",
+  "dependencies": {
+    "nativewind": "^4.0.0",
+    "tailwindcss": "^3.4.0",
+    "react": "18.3.1",
+    "react-native": "0.83.0"
+  }
+}
