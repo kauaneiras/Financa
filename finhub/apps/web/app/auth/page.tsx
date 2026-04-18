@@ -76,10 +76,34 @@ export default function AuthPage() {
         </form>
 
         <div className="mt-6 flex flex-col gap-3">
-          <button className="w-full h-12 border border-slate-200 dark:border-slate-700 font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+          <button 
+            type="button"
+            onClick={async () => {
+              const res = await fetch('http://127.0.0.1:4000/api/auth/login/google', { method: 'POST' });
+              const data = await res.json();
+              if (res.ok) {
+                localStorage.setItem('auth_token', data.token);
+                router.push('/');
+              }
+            }}
+            className="w-full h-12 border border-slate-200 dark:border-slate-700 font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+          >
+            <img src="https://authjs.dev/img/providers/google.svg" alt="Google" className="w-5 h-5" />
             Continuar com Google
           </button>
-          <button className="w-full h-12 border border-slate-200 dark:border-slate-700 font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+          <button 
+            type="button"
+            onClick={async () => {
+              const res = await fetch('http://127.0.0.1:4000/api/auth/login/microsoft', { method: 'POST' });
+              const data = await res.json();
+              if (res.ok) {
+                localStorage.setItem('auth_token', data.token);
+                router.push('/');
+              }
+            }}
+            className="w-full h-12 border border-slate-200 dark:border-slate-700 font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+          >
+            <img src="https://authjs.dev/img/providers/azure.svg" alt="Microsoft" className="w-5 h-5" />
             Continuar com Microsoft
           </button>
         </div>

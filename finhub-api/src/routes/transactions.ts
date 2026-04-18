@@ -60,19 +60,55 @@ export function createTransactionRouter(txRepo: ITransactionRepository, friendDe
   });
 
   router.post('/', validate(createTxSchema), (req: AuthRequest, res) => {
-    const tx = TransactionFactory.create({ userId: req.user!.id, ...req.body });
-    txRepo.create(tx);
+    let tx = TransactionFactory.create({ userId: req.user!.id, ...req.body });
 
-    // Business Logic for Vouchers (VA/VR): Immediate Deduction
-    if (tx.accountId && (tx.type === 'EXPENSE' || tx.type === 'SUBSCRIPTION')) {
-      const accounts = accountRepo.findByUserId(req.user!.id);
-      const account = accounts.find(a => a.id === tx.accountId);
-      
-      if (account && (account.type === 'VA' || account.type === 'VR')) {
-        // Deduct from current balance directly
+    const accounts = accountRepo.findByUserId(req.user!.id);
+    const account = tx.accountId ? accounts.find(a => a.id === tx.accountId) : null;
+
+    if (account) {
+      if (tx.type === 'INVESTMENT' || (tx.type === 'EXPENSE' && account.type !== 'CREDIT_CARD')) {
+        // Immediate deduction for investments and any non-credit expenses
         const newBalance = account.balance - tx.amount;
         accountRepo.update(account.id, { balance: newBalance });
+        txRepo.create(tx);
+      } 
+      else if (tx.type === 'EXPENSE' && account.type === 'CREDIT_CARD' && tx.installments && tx.installments > 1) {
+        // Brazilian Credit Card Splitting
+        const txDate = new Date(tx.date || new Date().toISOString());
+        let txDay = txDate.getDate();
+        let closingDay = account.closingDay || 20;
+        let dueDay = account.dueDay || 5;
+
+        // Determine first due date
+        let targetMonth = txDate.getMonth();
+        let targetYear = txDate.getFullYear();
+        
+        if (txDay >= closingDay) targetMonth++;
+        if (dueDay < closingDay) targetMonth++; 
+
+        const installmentAmount = +(tx.amount / tx.installments).toFixed(2);
+        const createdTxs = [];
+        
+        for (let i = 0; i < tx.installments; i++) {
+           const nextDue = new Date(targetYear, targetMonth + i, dueDay);
+           const newTx = TransactionFactory.create({
+             ...req.body,
+             userId: req.user!.id,
+             amount: installmentAmount,
+             date: nextDue.toISOString(),
+             installments: tx.installments,
+             installmentCurrent: i + 1,
+             installmentStartDate: txDate.toISOString()
+           });
+           txRepo.create(newTx);
+           createdTxs.push(newTx);
+        }
+        tx = createdTxs[0]; // For response and friend splitting
+      } else {
+        txRepo.create(tx);
       }
+    } else {
+      txRepo.create(tx);
     }
 
     // Auto-create friend debts from splits
