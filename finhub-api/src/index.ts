@@ -51,7 +51,7 @@ app.use('/api/auth', createAuthRouter(userRepo));
 app.use('/api/transactions', authMiddleware, createTransactionRouter(txRepo, friendDebtRepo, accountRepo));
 app.use('/api/accounts', authMiddleware, createAccountRouter(accountRepo));
 app.use('/api/schedules', authMiddleware, createScheduleRouter(scheduleRepo));
-app.use('/api/dashboard', authMiddleware, createDashboardRouter(txRepo, scheduleRepo, accountRepo));
+app.use('/api/dashboard', authMiddleware, createDashboardRouter(txRepo, scheduleRepo, accountRepo, recurringIncomeRepo));
 app.use('/api/social', authMiddleware, createSocialRouter());
 app.use('/api/friends', authMiddleware, createFriendsRouter(friendDebtRepo));
 app.use('/api/settings', authMiddleware, createSettingsRouter(settingsRepo));

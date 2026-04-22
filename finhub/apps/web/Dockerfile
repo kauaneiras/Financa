@@ -4,4 +4,8 @@ WORKDIR /usr/src/app
 
 RUN npm install -g pnpm
 
-CMD ["pnpm", "run", "dev", "--filter", "@finhub/web"]
+COPY . .
+
+RUN pnpm install --filter @finhub/web... --frozen-lockfile || pnpm install --filter @finhub/web...
+
+CMD ["pnpm", "--filter", "@finhub/web", "exec", "next", "dev", "-H", "0.0.0.0", "-p", "3000"]

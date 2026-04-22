@@ -20,11 +20,12 @@ services:
 
   web:
     build:
-      context: ./finhub-web
-      dockerfile: Dockerfile
+      context: ./finhub
+      dockerfile: apps/web/Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=http://localhost:4000
     container_name: finhub-web
+    command: ["pnpm", "--filter", "@finhub/web", "exec", "next", "dev", "-H", "0.0.0.0", "-p", "3000"]
     ports:
       - "3000:3000"
     depends_on:

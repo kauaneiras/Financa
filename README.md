@@ -1,6 +1,6 @@
 # Financa - Sistema de Gestão Financeira Inteligente
 
-Este projeto é uma plataforma completa de finanças contendo um **Frontend em Next.js** (`finhub-web`) e uma **API em Node.js** (`finhub-api`).
+Este projeto é uma plataforma completa de finanças contendo um **Frontend em Next.js** (em `finhub/apps/web`) e uma **API em Node.js** (`finhub-api`).
 
 ## Pré-requisitos
 Para rodar este projeto muito facilmente sem precisar instalar dependências node em sua máquina, você precisa ter instalado:
@@ -34,7 +34,7 @@ npm run dev
 **Para a Plataforma Web:**
 Abra um novo terminal e rode:
 ```bash
-cd finhub-web
+cd finhub/apps/web
 npm install
 npm run dev
 ```

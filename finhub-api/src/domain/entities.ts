@@ -78,6 +78,7 @@ export interface RecurringIncome {
   dayOfMonth: number;         // day of month it arrives
   type: 'SALARY' | 'VA' | 'VR' | 'OTHER';
   active: boolean;
+  startDate: string;
   createdAt: string;
 }
 
@@ -127,6 +128,64 @@ export interface BalanceBreakdown {
   balance: number;
 }
 
+export interface RecurringIncomeProjection {
+  id: string;
+  name: string;
+  category: string;
+  amount: number;
+  type: 'SALARY' | 'VA' | 'VR' | 'OTHER';
+  dayOfMonth: number;
+  active: boolean;
+  startDate: string;
+  projectedAmount: number;
+  confirmedAmount: number;
+  dayPassed: boolean;
+  confirmed: boolean;
+  lastOccurrence: string | null;
+  nextOccurrence: string | null;
+}
+
+export interface VoucherBalance {
+  accountId: string;
+  name: string;
+  type: 'VA' | 'VR';
+  balance: number;
+}
+
+export interface InstallmentPreview {
+  id: string;
+  description: string;
+  category: string;
+  amount: number;
+  date: string;
+  installmentCurrent: number;
+  installments: number;
+}
+
+export interface ForecastMonth {
+  label: string;
+  month: string;
+  projectedIncome: number;
+  projectedExpense: number;
+  projectedBalance: number;
+  subscriptionsTotal: number;
+  installmentsTotal: number;
+}
+
+export interface PeriodSummary {
+  from: string;
+  to: string;
+  projectedIncome: number;
+  confirmedIncome: number;
+  totalExpense: number;
+  totalInvestments: number;
+  balance: number;
+  recurringIncomes: RecurringIncomeProjection[];
+  categoryBreakdown: { category: string; total: number }[];
+  voucherBalances: VoucherBalance[];
+  installments: InstallmentPreview[];
+}
+
 export interface DashboardSummary {
   totalIncome: number;
   totalExpense: number;
@@ -138,4 +197,10 @@ export interface DashboardSummary {
   friendDebts: { name: string; amount: number }[];
   timeline: { date: string; income: number; expense: number }[];
   balanceBreakdown: BalanceBreakdown[];
+  periodSummary: PeriodSummary;
+  forecast: ForecastMonth[];
+  transactions: Transaction[];
+  accounts: Account[];
+  recurrings: RecurringIncome[];
+  subscriptions: Transaction[];
 }
