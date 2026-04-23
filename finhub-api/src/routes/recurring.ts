@@ -11,7 +11,7 @@ const createSchema = z.object({
   category: z.string().min(1),
   dayOfMonth: z.number({ coerce: true }).min(1).max(31),
   type: z.enum(['SALARY', 'VA', 'VR', 'OTHER']),
-  startDate: z.string().optional(),
+  startDate: z.string().optional().nullable(),
 });
 
 const updateSchema = z.object({
@@ -21,7 +21,7 @@ const updateSchema = z.object({
   dayOfMonth: z.number({ coerce: true }).min(1).max(31).optional(),
   type: z.enum(['SALARY', 'VA', 'VR', 'OTHER']).optional(),
   active: z.boolean().optional(),
-  startDate: z.string().optional(),
+  startDate: z.string().optional().nullable(),
 });
 
 export function createRecurringRouter(repo: IRecurringIncomeRepository) {

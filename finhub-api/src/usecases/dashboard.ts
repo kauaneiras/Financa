@@ -6,6 +6,7 @@ import {
   RecurringIncome,
   RecurringIncomeProjection,
   Transaction,
+  VoucherBalance,
 } from '../domain/entities';
 import {
   IAccountRepository,
@@ -317,7 +318,7 @@ export class DashboardUseCase {
       .sort((a, b) => a.dayOfMonth - b.dayOfMonth);
 
     const recurringProjectedCash = recurringIncomes.reduce((sum, recurring) => (
-      isCashRecurring(recurring as RecurringIncome) ? sum + recurring.projectedAmount : sum
+      isCashRecurring(recurring as unknown as RecurringIncome) ? sum + recurring.projectedAmount : sum
     ), 0);
     const recurringConfirmedCash = recurringIncomes.reduce((sum, recurring) => (
       (recurring.type === 'SALARY' || recurring.type === 'OTHER') ? sum + recurring.confirmedAmount : sum
@@ -357,8 +358,8 @@ export class DashboardUseCase {
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    const voucherBalances = accounts
-      .filter((account) => account.type === 'VA' || account.type === 'VR')
+    const voucherBalances: VoucherBalance[] = accounts
+      .filter((account): account is Account & { type: 'VA' | 'VR' } => account.type === 'VA' || account.type === 'VR')
       .map((account) => ({
         accountId: account.id,
         name: account.name,

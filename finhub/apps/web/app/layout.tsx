@@ -1,8 +1,10 @@
 import './globals.css';
+import { ThemeProvider } from './components/ThemeProvider';
+import ClientLayout from './components/ClientLayout';
 
 export const metadata = {
-  title: 'FinHub',
-  description: 'Seu Ecossistema Financeiro Universal',
+  title: 'Financa',
+  description: 'Seu ecossistema financeiro pessoal',
 };
 
 export default function RootLayout({
@@ -11,9 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
-      <body className="antialiased font-sans flex flex-col min-h-screen">
-        {children}
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
